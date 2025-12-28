@@ -1,353 +1,254 @@
 <!DOCTYPE html>
 <html lang="id">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Sistem Kasir Toko Celana - Google Sheets Edition</title>
-    <link
-      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
-      rel="stylesheet"
-    />
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistem Kasir Toko Celana - Centralized Notif</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"
-    />
-
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+    
     <style>
-      body {
-        background-color: #f8f9fa;
-        font-family: "Segoe UI", sans-serif;
-      }
-      .card {
-        border: none;
-        border-radius: 12px;
-      }
-      .table thead {
-        background-color: #212529;
-        color: white;
-      }
-      .btn-update {
-        background-color: #f39c12;
-        color: white;
-        border: none;
-      }
-      .btn-update:hover {
-        background-color: #e67e22;
-        color: white;
-      }
-      .badge-size {
-        font-size: 0.85rem;
-      }
+        body { background-color: #f8f9fa; font-family: 'Segoe UI', sans-serif; }
+        .card { border: none; border-radius: 12px; }
+        .table thead { background-color: #212529; color: white; }
+        .btn-update { background-color: #f39c12; color: white; border: none; }
+        .btn-update:hover { background-color: #e67e22; color: white; }
+        .badge-size { font-size: 0.85rem; }
     </style>
-  </head>
-  <body>
-    <div class="container py-5">
-      <h2 class="text-center mb-4 fw-bold text-uppercase">
-        Manajemen Stok (Cloud Google Sheets)
-      </h2>
+</head>
+<body>
 
-      <div class="card mb-5 shadow-sm">
+<div class="container py-5">
+    <h2 class="text-center mb-4 fw-bold text-uppercase">Manajemen Stok Toko Celana</h2>
+
+    <div class="card mb-5 shadow-sm">
         <div class="card-body p-4">
-          <h5 class="card-title mb-4" id="formTitle">📦 Tambah Produk Baru</h5>
-          <form id="produkForm" class="row g-3">
-            <input type="hidden" id="prodId" />
+            <h5 class="card-title mb-4" id="formTitle">📦 Tambah Produk Baru</h5>
+            <form id="produkForm" class="row g-3">
+                <input type="hidden" id="prodId">
+                
+                <div class="col-md-6">
+                    <label class="form-label fw-bold">Nama Model</label>
+                    <input type="text" class="form-control" id="nama_model" placeholder="Misal: Chino Slim" required>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label fw-bold">Merek</label>
+                    <input type="text" class="form-control" id="merek" placeholder="Misal: Levi's" required>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Bahan</label>
+                    <input type="text" class="form-control" id="jenis_bahan" placeholder="Denim / Katun">
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Ukuran</label>
+                    <input type="text" class="form-control" id="ukuran" placeholder="28, 30, L, XL">
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Warna</label>
+                    <input type="text" class="form-control" id="warna" placeholder="Hitam / Navy">
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Tipe Fit</label>
+                    <input type="text" class="form-control" id="tipe_fit" placeholder="Slim Fit / Regular">
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label fw-bold">Harga (Rp)</label>
+                    <input type="number" class="form-control" id="harga" required>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label fw-bold">Stok</label>
+                    <input type="number" class="form-control" id="stok" required>
+                </div>
 
-            <div class="col-md-6">
-              <label class="form-label fw-bold">Nama Model</label>
-              <input
-                type="text"
-                class="form-control"
-                id="nama_model"
-                placeholder="Misal: Chino Slim"
-                required
-              />
-            </div>
-            <div class="col-md-6">
-              <label class="form-label fw-bold">Merek</label>
-              <input
-                type="text"
-                class="form-control"
-                id="merek"
-                placeholder="Misal: Levi's"
-                required
-              />
-            </div>
-            <div class="col-md-4">
-              <label class="form-label">Bahan</label>
-              <input
-                type="text"
-                class="form-control"
-                id="jenis_bahan"
-                placeholder="Denim / Katun"
-              />
-            </div>
-            <div class="col-md-4">
-              <label class="form-label">Ukuran</label>
-              <input
-                type="text"
-                class="form-control"
-                id="ukuran"
-                placeholder="28, 30, L, XL"
-              />
-            </div>
-            <div class="col-md-4">
-              <label class="form-label">Warna</label>
-              <input
-                type="text"
-                class="form-control"
-                id="warna"
-                placeholder="Hitam / Navy"
-              />
-            </div>
-            <div class="col-md-4">
-              <label class="form-label">Tipe Fit</label>
-              <input
-                type="text"
-                class="form-control"
-                id="tipe_fit"
-                placeholder="Slim Fit / Regular"
-              />
-            </div>
-            <div class="col-md-4">
-              <label class="form-label fw-bold">Harga (Rp)</label>
-              <input type="number" class="form-control" id="harga" required />
-            </div>
-            <div class="col-md-4">
-              <label class="form-label fw-bold">Stok</label>
-              <input type="number" class="form-control" id="stok" required />
-            </div>
-
-            <div class="col-12 mt-4 text-center">
-              <button
-                type="submit"
-                class="btn btn-primary w-100 fw-bold py-2"
-                id="btnAction"
-              >
-                SIMPAN DATA KE GOOGLE SHEETS
-              </button>
-              <button
-                type="button"
-                class="btn btn-secondary w-100 mt-2 d-none"
-                id="btnBatal"
-                onclick="resetForm()"
-              >
-                BATAL EDIT
-              </button>
-            </div>
-          </form>
+                <div class="col-12 mt-4 text-center">
+                    <button type="submit" class="btn btn-primary w-100 fw-bold py-2" id="btnAction">SIMPAN DATA PRODUK</button>
+                    <button type="button" class="btn btn-secondary w-100 mt-2 d-none" id="btnBatal" onclick="resetForm()">BATAL EDIT</button>
+                </div>
+            </form>
         </div>
-      </div>
-
-      <div class="card shadow-sm">
-        <div class="card-body p-0">
-          <div class="table-responsive">
-            <table class="table table-hover mb-0 align-middle">
-              <thead>
-                <tr>
-                  <th class="ps-3">Model</th>
-                  <th>Merek</th>
-                  <th>Bahan</th>
-                  <th>Ukuran</th>
-                  <th>Fit</th>
-                  <th>Warna</th>
-                  <th>Harga</th>
-                  <th>Stok</th>
-                  <th class="text-center">Aksi</th>
-                </tr>
-              </thead>
-              <tbody id="produkTable">
-                <tr>
-                  <td colspan="9" class="text-center py-4 text-muted">
-                    Memuat data dari Google Sheets...
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </div>
     </div>
 
-    <script>
-      // URL API SheetDB kamu
-      const API_URL = "https://sheetdb.io/api/v1/g4r4f2kjg6k0q";
-      let isEdit = false;
+    <div class="card shadow-sm">
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover mb-0 align-middle">
+                    <thead>
+                        <tr>
+                            <th class="ps-3">Model</th>
+                            <th>Merek</th>
+                            <th>Bahan</th>
+                            <th>Ukuran</th>
+                            <th>Fit</th>
+                            <th>Warna</th>
+                            <th>Harga</th>
+                            <th>Stok</th>
+                            <th class="text-center">Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody id="produkTable"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
 
-      const notifyCenter = (icon, title, text) => {
+<script>
+    /* TIPS: Jika ingin buka di HP, ganti 'localhost' 
+       dengan IP Laptop Anda (contoh: 192.168.1.15)
+    */
+    const API_URL = "http://localhost:5000/produk";
+    let isEdit = false;
+
+    // Helper: Notifikasi Tengah (SweetAlert2)
+    const notifyCenter = (icon, title, text) => {
         Swal.fire({
-          icon: icon,
-          title: title,
-          text: text,
-          position: "center",
-          showConfirmButton: false,
-          timer: 2000,
-          showClass: { popup: "animate__animated animate__zoomIn" },
-          hideClass: { popup: "animate__animated animate__zoomOut" },
+            icon: icon,
+            title: title,
+            text: text,
+            position: 'center',
+            showConfirmButton: false,
+            timer: 2000,
+            showClass: { popup: 'animate__animated animate__zoomIn' },
+            hideClass: { popup: 'animate__animated animate__zoomOut' }
         });
-      };
+    };
 
-      // 1. Fungsi Ambil Data (GET)
-      async function loadData() {
+    // 1. Fungsi Ambil Data (GET)
+    async function loadData() {
         try {
-          const res = await axios.get(API_URL);
-          const tableBody = document.getElementById("produkTable");
-          tableBody.innerHTML = "";
-
-          if (res.data.length === 0) {
-            tableBody.innerHTML = `<tr><td colspan="9" class="text-center py-4">Belum ada data di Google Sheets.</td></tr>`;
-            return;
-          }
-
-          res.data.forEach((p) => {
-            tableBody.innerHTML += `
-                <tr>
-                    <td class="ps-3 fw-bold text-dark">${p.nama_model}</td>
-                    <td>${p.merek}</td>
-                    <td>${p.jenis_bahan || "-"}</td>
-                    <td><span class="badge bg-secondary badge-size">${
-                      p.ukuran || "-"
-                    }</span></td>
-                    <td>${p.tipe_fit || "-"}</td>
-                    <td>${p.warna || "-"}</td>
-                    <td class="text-success fw-bold">Rp ${Number(
-                      p.harga
-                    ).toLocaleString("id-ID")}</td>
-                    <td>${p.stok} pcs</td>
-                    <td class="text-center">
-                        <div class="btn-group" role="group">
-                            <button class="btn btn-sm btn-warning" onclick='prepEdit(${JSON.stringify(
-                              p
-                            )})'>Edit</button>
-                            <button class="btn btn-sm btn-danger" onclick="hapusData('${
-                              p.id
-                            }', '${p.nama_model}')">Hapus</button>
-                        </div>
-                    </td>
-                </tr>`;
-          });
-        } catch (err) {
-          console.error("Gagal koneksi ke SheetDB.");
-          document.getElementById(
-            "produkTable"
-          ).innerHTML = `<tr><td colspan="9" class="text-center text-danger">Gagal memuat data. Cek API Key.</td></tr>`;
+            const res = await axios.get(API_URL);
+            const tableBody = document.getElementById('produkTable');
+            tableBody.innerHTML = '';
+            
+            res.data.forEach(p => {
+                tableBody.innerHTML += `
+                    <tr>
+                        <td class="ps-3 fw-bold text-dark">${p.nama_model}</td>
+                        <td>${p.merek}</td>
+                        <td>${p.jenis_bahan || '-'}</td>
+                        <td><span class="badge bg-secondary badge-size">${p.ukuran || '-'}</span></td>
+                        <td>${p.tipe_fit || '-'}</td>
+                        <td>${p.warna || '-'}</td>
+                        <td class="text-success fw-bold">Rp ${Number(p.harga).toLocaleString('id-ID')}</td>
+                        <td>${p.stok} pcs</td>
+                        <td class="text-center">
+                            <div class="btn-group" role="group">
+                                <button class="btn btn-sm btn-warning" onclick='editData(${JSON.stringify(p)})'>Edit</button>
+                                <button class="btn btn-sm btn-danger" onclick="hapusData(${p.id}, '${p.nama_model}')">Hapus</button>
+                            </div>
+                        </td>
+                    </tr>`;
+            });
+        } catch (err) { 
+            console.error("Gagal koneksi ke Backend."); 
+            // Jangan munculkan alert di sini agar tidak spam saat server mati
         }
-      }
+    }
 
-      // 2. Fungsi Submit (Simpan & Update)
-      document
-        .getElementById("produkForm")
-        .addEventListener("submit", async (e) => {
-          e.preventDefault();
+    // 2. Fungsi Submit (Simpan & Update)
+    document.getElementById('produkForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        const payload = {
+            nama_model: document.getElementById('nama_model').value,
+            merek: document.getElementById('merek').value,
+            jenis_bahan: document.getElementById('jenis_bahan').value,
+            ukuran: document.getElementById('ukuran').value,
+            warna: document.getElementById('warna').value,
+            tipe_fit: document.getElementById('tipe_fit').value,
+            harga: document.getElementById('harga').value,
+            stok: document.getElementById('stok').value
+        };
 
-          const btn = document.getElementById("btnAction");
-          btn.disabled = true;
-          btn.innerText = "SEDANG MEMPROSES...";
-
-          const payload = {
-            nama_model: document.getElementById("nama_model").value,
-            merek: document.getElementById("merek").value,
-            jenis_bahan: document.getElementById("jenis_bahan").value,
-            ukuran: document.getElementById("ukuran").value,
-            warna: document.getElementById("warna").value,
-            tipe_fit: document.getElementById("tipe_fit").value,
-            harga: document.getElementById("harga").value,
-            stok: document.getElementById("stok").value,
-          };
-
-          try {
+        try {
             if (isEdit) {
-              const id = document.getElementById("prodId").value;
-              // UPDATE: SheetDB menggunakan PATCH/PUT dengan pencarian kolom
-              await axios.patch(`${API_URL}/id/${id}`, { data: payload });
-              notifyCenter(
-                "success",
-                "Update Berhasil!",
-                "Data di Google Sheets telah diperbarui."
-              );
+                const id = document.getElementById('prodId').value;
+                await axios.put(`${API_URL}/${id}`, payload);
+                notifyCenter('success', 'Update Berhasil!', 'Data produk telah diperbarui.');
             } else {
-              // INSERT: Menambahkan ID unik (timestamp) agar bisa di-edit/hapus nanti
-              payload.id = Date.now().toString();
-              await axios.post(API_URL, { data: [payload] });
-              notifyCenter(
-                "success",
-                "Simpan Berhasil!",
-                "Data telah masuk ke Google Sheets."
-              );
+                await axios.post(API_URL, payload);
+                notifyCenter('success', 'Simpan Berhasil!', 'Produk baru telah ditambahkan.');
             }
             resetForm();
             loadData();
-          } catch (err) {
-            Swal.fire(
-              "Gagal!",
-              "Gagal menghubungi Google Sheets API.",
-              "error"
-            );
-          } finally {
-            btn.disabled = false;
-          }
-        });
+        } catch (err) {
+            Swal.fire('Gagal!', 'Pastikan Backend menyala & Database terhubung.', 'error');
+        }
+    });
 
-      // 3. Persiapan Edit
-      function prepEdit(p) {
+    // 3. Masuk Mode Edit (Mengisi Form)
+    function editData(p) {
         isEdit = true;
-        document.getElementById("formTitle").innerText =
-          "📝 Edit Produk: " + p.nama_model;
-        const btnAction = document.getElementById("btnAction");
-        btnAction.innerText = "UPDATE KE GOOGLE SHEETS";
+        document.getElementById('formTitle').innerText = "📝 Edit Produk: " + p.nama_model;
+        
+        const btnAction = document.getElementById('btnAction');
+        btnAction.innerText = "UPDATE DATA SEKARANG";
         btnAction.className = "btn btn-update w-100 fw-bold py-2";
-        document.getElementById("btnBatal").classList.remove("d-none");
+        document.getElementById('btnBatal').classList.remove('d-none');
+        
+        // Isi Form
+        document.getElementById('prodId').value = p.id;
+        document.getElementById('nama_model').value = p.nama_model;
+        document.getElementById('merek').value = p.merek;
+        document.getElementById('jenis_bahan').value = p.jenis_bahan;
+        document.getElementById('ukuran').value = p.ukuran;
+        document.getElementById('warna').value = p.warna;
+        document.getElementById('tipe_fit').value = p.tipe_fit;
+        document.getElementById('harga').value = p.harga;
+        document.getElementById('stok').value = p.stok;
+        
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        notifyCenter('info', 'Mode Edit Aktif', 'Ubah data pada kolom di atas.');
+    }
 
-        document.getElementById("prodId").value = p.id;
-        document.getElementById("nama_model").value = p.nama_model;
-        document.getElementById("merek").value = p.merek;
-        document.getElementById("jenis_bahan").value = p.jenis_bahan;
-        document.getElementById("ukuran").value = p.ukuran;
-        document.getElementById("warna").value = p.warna;
-        document.getElementById("tipe_fit").value = p.tipe_fit;
-        document.getElementById("harga").value = p.harga;
-        document.getElementById("stok").value = p.stok;
-
-        window.scrollTo({ top: 0, behavior: "smooth" });
-      }
-
-      // 4. Reset Form
-      function resetForm() {
+    // 4. Reset Form (Kembali ke mode Tambah)
+    function resetForm() {
         isEdit = false;
-        document.getElementById("produkForm").reset();
-        document.getElementById("formTitle").innerText =
-          "📦 Tambah Produk Baru";
-        const btnAction = document.getElementById("btnAction");
-        btnAction.innerText = "SIMPAN DATA KE GOOGLE SHEETS";
+        document.getElementById('produkForm').reset();
+        document.getElementById('formTitle').innerText = "📦 Tambah Produk Baru";
+        
+        const btnAction = document.getElementById('btnAction');
+        btnAction.innerText = "SIMPAN DATA PRODUK";
         btnAction.className = "btn btn-primary w-100 fw-bold py-2";
-        document.getElementById("btnBatal").classList.add("d-none");
-      }
+        
+        document.getElementById('btnBatal').classList.add('d-none');
+        document.getElementById('prodId').value = "";
+    }
 
-      // 5. Fungsi Hapus (DELETE)
-      async function hapusData(id, nama) {
+    // 5. Fungsi Hapus (DELETE)
+    async function hapusData(id, nama) {
         Swal.fire({
-          title: "Hapus Data?",
-          text: `Hapus "${nama}" dari Google Sheets?`,
-          icon: "warning",
-          showCancelButton: true,
-          confirmButtonColor: "#d33",
-          confirmButtonText: "Ya, Hapus!",
+            title: 'Hapus Data?',
+            text: `Anda akan menghapus "${nama}" selamanya!`,
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Ya, Hapus!',
+            cancelButtonText: 'Batal'
         }).then(async (result) => {
-          if (result.isConfirmed) {
-            try {
-              // Hapus berdasarkan kolom 'id'
-              await axios.delete(`${API_URL}/id/${id}`);
-              loadData();
-              Swal.fire("Terhapus!", "Data berhasil dihapus.", "success");
-            } catch (err) {
-              Swal.fire("Error!", "Gagal menghapus data.", "error");
+            if (result.isConfirmed) {
+                try {
+                    await axios.delete(`${API_URL}/${id}`);
+                    loadData();
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Terhapus!',
+                        text: 'Data berhasil dihilangkan dari sistem.',
+                        timer: 1500,
+                        showConfirmButton: false
+                    });
+                } catch (err) {
+                    Swal.fire('Error!', 'Gagal menghapus data.', 'error');
+                }
             }
-          }
         });
-      }
+    }
 
-      loadData();
-    </script>
-  </body>
+    // Jalankan load data saat pertama kali buka halaman
+    loadData();
+</script>
+</body>
 </html>
