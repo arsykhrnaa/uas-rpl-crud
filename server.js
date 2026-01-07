@@ -51,11 +51,11 @@ app.delete('/produk/:id', (req, res) => {
     });
 });
 
-// --- PERBAIKAN DI SINI (Baris 57-60) ---
+// --- PENGATURAN PORT & JALANKAN SERVER ---
 const PORT = process.env.PORT || 5000;
-// Gunakan 0.0.0.0 agar bisa diakses perangkat lain di jaringan yang sama
+
+// Cukup panggil app.listen satu kali saja
 app.listen(PORT, '0.0.0.0', () => {
-    // Pastikan teks console.log menggunakan tanda backtick (`) atau kutip
     console.log(`🚀 Server Backend Jalan di http://10.126.245.123:${PORT}`);
     console.log(`✅ Database MySQL Terhubung di Port 3306`);
 });
