@@ -1,11 +1,9 @@
 const express = require('express');
 const cors = require('cors');
-const db = require('./db'); 
+const db = require('./db'); // Mengambil koneksi dari file db.js
 require('dotenv').config();
 
 const app = express();
-
-// Middleware
 app.use(cors());
 app.use(express.json());
 
@@ -13,7 +11,7 @@ app.use(express.json());
 app.get('/produk', (req, res) => {
     const sql = "SELECT * FROM produk_celana ORDER BY id DESC";
     db.query(sql, (err, result) => {
-        if (err) return res.status(500).json({ error: "Gagal mengambil data: " + err.message });
+        if (err) return res.status(500).json({ error: err.message });
         res.json(result);
     });
 });
@@ -24,8 +22,8 @@ app.post('/produk', (req, res) => {
     const sql = "INSERT INTO produk_celana (nama_model, merek, jenis_bahan, ukuran, warna, tipe_fit, harga, stok) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
     
     db.query(sql, [nama_model, merek, jenis_bahan, ukuran, warna, tipe_fit, harga, stok], (err, result) => {
-        if (err) return res.status(500).json({ error: "Gagal menyimpan: " + err.sqlMessage });
-        res.status(201).json({ message: "Data berhasil disimpan!" });
+        if (err) return res.status(500).json({ error: err.sqlMessage });
+        res.json({ message: "Data berhasil disimpan!" });
     });
 });
 
@@ -37,7 +35,7 @@ app.put('/produk/:id', (req, res) => {
     const sql = "UPDATE produk_celana SET nama_model=?, merek=?, jenis_bahan=?, ukuran=?, warna=?, tipe_fit=?, harga=?, stok=? WHERE id=?";
     
     db.query(sql, [nama_model, merek, jenis_bahan, ukuran, warna, tipe_fit, harga, stok, id], (err, result) => {
-        if (err) return res.status(500).json({ error: "Gagal memperbarui: " + err.sqlMessage });
+        if (err) return res.status(500).json({ error: err.sqlMessage });
         res.json({ message: "Data berhasil diperbarui!" });
     });
 });
@@ -48,15 +46,16 @@ app.delete('/produk/:id', (req, res) => {
     const sql = "DELETE FROM produk_celana WHERE id = ?";
     
     db.query(sql, [id], (err, result) => {
-        if (err) return res.status(500).json({ error: "Gagal menghapus: " + err.message });
-        res.json({ message: "Data berhasil dihapus!" });
+        if (err) return res.status(500).json({ error: err.message });
+        res.json({ message: "Data dihapus!" });
     });
 });
 
-// Jalankan Server pada IP terbaru (Wireless LAN adapter Wi-Fi)
+// --- PERBAIKAN DI SINI (Baris 57-60) ---
 const PORT = process.env.PORT || 5000;
+// Gunakan 0.0.0.0 agar bisa diakses perangkat lain di jaringan yang sama
 app.listen(PORT, '0.0.0.0', () => {
-    // Diperbarui sesuai hasil ipconfig Anda: 10.126.245.123
+    // Pastikan teks console.log menggunakan tanda backtick (`) atau kutip
     console.log(`🚀 Server Backend Jalan di http://10.126.245.123:${PORT}`);
     console.log(`✅ Database MySQL Terhubung di Port 3306`);
 });
