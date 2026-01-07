@@ -1,9 +1,11 @@
 const express = require('express');
 const cors = require('cors');
-const db = require('./db'); // Mengambil koneksi dari file db.js
+const db = require('./db'); 
 require('dotenv').config();
 
 const app = express();
+
+// Middleware
 app.use(cors());
 app.use(express.json());
 
@@ -51,11 +53,9 @@ app.delete('/produk/:id', (req, res) => {
     });
 });
 
-// --- PENGATURAN PORT & JALANKAN SERVER ---
+// --- JALANKAN SERVER ---
 const PORT = process.env.PORT || 5000;
-
-// Cukup panggil app.listen satu kali saja
-app.listen(PORT, '0.0.0.0', () => {
-    console.log(`🚀 Server Backend Jalan di http://10.126.245.123:${PORT}`);
-    console.log(`✅ Database MySQL Terhubung di Port 3306`);
+app.listen(PORT, () => {
+    // Menggunakan tanda kutip biasa agar tidak ada error karakter di terminal
+    console.log("Server Backend Jalan di http://localhost:" + PORT);
 });
