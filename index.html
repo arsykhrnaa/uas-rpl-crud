@@ -28,6 +28,7 @@
             <h5 class="card-title mb-4" id="formTitle">📦 Tambah Produk Baru</h5>
             <form id="produkForm" class="row g-3">
                 <input type="hidden" id="prodId">
+                
                 <div class="col-md-6">
                     <label class="form-label fw-bold">Nama Model</label>
                     <input type="text" class="form-control" id="nama_model" placeholder="Misal: Chino Slim" required>
@@ -94,17 +95,22 @@
 </div>
 
 <script>
-    // IP Laptop Anda agar bisa dibuka di HP
-    const API_URL = "http://10.126.245.123:5000/produk";
+    // Konfigurasi API ke localhost
+    const API_URL = "http://localhost:5000/produk";
     let isEdit = false;
 
     const notifyCenter = (icon, title, text) => {
         Swal.fire({
-            icon: icon, title: title, text: text,
-            position: 'center', showConfirmButton: false, timer: 2000
+            icon: icon,
+            title: title,
+            text: text,
+            position: 'center',
+            showConfirmButton: false,
+            timer: 2000
         });
     };
 
+    // 1. Ambil Data
     async function loadData() {
         try {
             const res = await axios.get(API_URL);
@@ -112,7 +118,6 @@
             tableBody.innerHTML = '';
             
             res.data.forEach(p => {
-                // Perbaikan: Pastikan menggunakan tanda backtick (`) untuk membungkus HTML
                 tableBody.innerHTML += `
                     <tr>
                         <td class="ps-3 fw-bold text-dark">${p.nama_model}</td>
@@ -125,19 +130,21 @@
                         <td>${p.stok} pcs</td>
                         <td class="text-center">
                             <div class="btn-group">
-                                <button class="btn btn-sm btn-warning" onclick='editData(${JSON.stringify(p)})'>Edit</button>
+                                <button class="btn btn-sm btn-warning" onclick='showEdit(${JSON.stringify(p)})'>Edit</button>
                                 <button class="btn btn-sm btn-danger" onclick="hapusData(${p.id}, '${p.nama_model}')">Hapus</button>
                             </div>
                         </td>
                     </tr>`;
             });
         } catch (err) { 
-            console.error("Gagal koneksi backend");
+            console.error("Gagal load data: " + err.message); 
         }
     }
 
+    // 2. Simpan & Update
     document.getElementById('produkForm').addEventListener('submit', async (e) => {
         e.preventDefault();
+        
         const payload = {
             nama_model: document.getElementById('nama_model').value,
             merek: document.getElementById('merek').value,
@@ -152,7 +159,7 @@
         try {
             if (isEdit) {
                 const id = document.getElementById('prodId').value;
-                // Perbaikan: Menggunakan backtick untuk URL
+                // PERBAIKAN: Menggunakan Backtick (`) untuk URL
                 await axios.put(`${API_URL}/${id}`, payload);
                 notifyCenter('success', 'Update Berhasil!', 'Data telah diperbarui.');
             } else {
@@ -162,11 +169,13 @@
             resetForm();
             loadData();
         } catch (err) {
-            Swal.fire('Gagal!', 'Cek koneksi server Anda.', 'error');
+            console.error(err);
+            Swal.fire('Gagal!', 'Terjadi kesalahan koneksi ke server.', 'error');
         }
     });
 
-    function editData(p) {
+    // 3. Mode Edit
+    function showEdit(p) {
         isEdit = true;
         document.getElementById('formTitle').innerText = "📝 Edit Produk: " + p.nama_model;
         document.getElementById('btnAction').innerText = "UPDATE DATA SEKARANG";
@@ -186,6 +195,7 @@
         window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
+    // 4. Reset
     function resetForm() {
         isEdit = false;
         document.getElementById('produkForm').reset();
@@ -196,26 +206,26 @@
         document.getElementById('prodId').value = "";
     }
 
+    // 5. Hapus
     async function hapusData(id, nama) {
-        Swal.fire({
+        const result = await Swal.fire({
             title: 'Hapus Data?',
             text: `Anda akan menghapus "${nama}" selamanya!`,
             icon: 'warning',
             showCancelButton: true,
-            confirmButtonColor: '#d33',
             confirmButtonText: 'Ya, Hapus!'
-        }).then(async (result) => {
-            if (result.isConfirmed) {
-                try {
-                    // Perbaikan: Menggunakan backtick untuk URL delete
-                    await axios.delete(`${API_URL}/${id}`);
-                    loadData();
-                    Swal.fire({ icon: 'success', title: 'Terhapus!', timer: 1500, showConfirmButton: false });
-                } catch (err) {
-                    Swal.fire('Error!', 'Gagal menghapus data.', 'error');
-                }
-            }
         });
+
+        if (result.isConfirmed) {
+            try {
+                // PERBAIKAN: Menggunakan Backtick (`) untuk URL
+                await axios.delete(`${API_URL}/${id}`);
+                loadData();
+                Swal.fire('Terhapus!', 'Data berhasil dihapus.', 'success');
+            } catch (err) {
+                Swal.fire('Error!', 'Gagal menghapus data.', 'error');
+            }
+        }
     }
 
     loadData();
